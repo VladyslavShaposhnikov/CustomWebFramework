@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello world!</title>
+</head>
+<body>
+    <h1>This is my own web, god-damn, framework!</h1>
+    <h1>Books</h1>
+    <a href="http://localhost:8080/add">Add new book</a>
+    <br>
+    <table>
+        <tr>
+            <th>
+                Book Id
+            </th>
+            <th>
+                Book title
+            </th>
+            <th>
+                Book Author
+            </th>
+            <th>
+                Details
+            </th>
+        </tr>
+        @foreach(var item in Books)
+        {
+        <tr>
+            <td>
+                {{item.ID}}
+            </td>
+            <td>
+                {{item.Title}}
+            </td>
+            <td>
+                {{item.Author}}
+            </td>
+            <td>
+                <a href="http://localhost:8080/details/{{item.ID}}">GO</a>
+            </td>
+        </tr>
+        }
+        @endforeach
+    </table>
+</body>
+</html>

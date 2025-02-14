@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+</head>
+<body>
+<h1>Edit page</h1>
+<form method="post" action="http://localhost:8080/editbook">
+    <input value="{{ID}}" name="Id" type="hidden">
+    <label>Book Title: </label>
+    <input value="{{Title}}" name="Title" type="text">
+    <br>
+    <label>Book Author: </label>
+    <input value="{{Author}}" name="Author" type="text" minlength="3">
+    <br>
+    <button type="submit">OK</button>
+</form>
+<br>
+<a href="http://localhost:8080">Go to index</a>
+</body>
+</html>
