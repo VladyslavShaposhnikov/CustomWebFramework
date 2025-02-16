@@ -40,3 +40,4 @@ C:\Users\vlady\RiderProjects\SimpleWebServer\SimpleWebServer\bin\Debug\net8.0\ru
 C:\Users\vlady\RiderProjects\SimpleWebServer\SimpleWebServer\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 C:\Users\vlady\RiderProjects\SimpleWebServer\SimpleWebServer\obj\Debug\net8.0\SimpleWebServer.csproj.AssemblyReference.cache
 C:\Users\vlady\RiderProjects\SimpleWebServer\SimpleWebServer\obj\Debug\net8.0\SimpleWe.C1C58C2E.Up2Date
+C:\Users\vlady\RiderProjects\SimpleWebServer\SimpleWebServer\obj\Debug\net8.0\SimpleWebServer.sourcelink.json

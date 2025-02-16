@@ -9,14 +9,16 @@ class Program
 {
     static void Main()
     {
+        int[] numbers = MainController.bookList.Select(id => id.ID).ToArray();
         Urls urls = new Urls();
         urls.RegisterPath("/index", typeof(MainController), "Index");
+        urls.RegisterPath("/", typeof(MainController), "Index");
         urls.RegisterPath("/add", typeof(MainController), "Add");
         urls.RegisterPath("/addbook", typeof(MainController), "AddBook");
         urls.RegisterPath("/editbook", typeof(MainController), "EditBook");
-        Urls.RegisterPathForDetails("/details", typeof(MainController), "Details", MainController.bookList);
-        Urls.RegisterPathForDetails("/delete", typeof(MainController), "Delete", MainController.bookList);
-        Urls.RegisterPathForDetails("/edit", typeof(MainController), "Edit", MainController.bookList);
+        Urls.RegisterPathForId("/details", typeof(MainController), "Details", numbers);
+        Urls.RegisterPathForId("/delete", typeof(MainController), "Delete", numbers);
+        Urls.RegisterPathForId("/edit", typeof(MainController), "Edit", numbers);
         
         int port = 8080;
         TcpListener server = new TcpListener(IPAddress.Any, port);
@@ -41,11 +43,6 @@ class Program
             
             string url = splittedRequest[1];
 
-            if (url.Trim() == "/")
-            {
-                url = "/index";
-            }
-
             Console.WriteLine($"Method: {method}");
             Console.WriteLine($"Url: {url}");
             
@@ -53,10 +50,6 @@ class Program
             string responseHeader = "";
 
             var (controllerType, actionName) = urls.GetPath(url);
-            if (controllerType is null && actionName is null)
-            {
-                Console.WriteLine("No controller or action found");
-            }
             string[] splitted = new[] { "" };
             splitted = actionName.Split('/');
             
@@ -93,6 +86,16 @@ class Program
                     }
                     responseHeader = urls.GenerateHeaders(url, responseBody.Length);
                 }
+                else
+                {
+                    responseBody = "No controller or action found";
+                    responseHeader = urls.GenerateHeaders(null, responseBody.Length);
+                }
+            }
+            else
+            {
+                responseBody = "No controller or action found";
+                responseHeader = urls.GenerateHeaders(null, responseBody.Length);
             }
 
             // Send the response

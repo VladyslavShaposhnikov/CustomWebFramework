@@ -1,3 +1,6 @@
+using System.Reflection;
+using SimpleWebServer.urls;
+
 namespace SimpleWebServer.Requests;
 
 public class HandlePost
@@ -41,5 +44,25 @@ public class HandlePost
         
         return template;
     }
-    
+
+    // this method register path where url is method name with 1 parameter named "id"
+    public void CreatePathById(Type controllerType, int id)
+    {
+        List<string> methods = new List<string>();
+        foreach (MethodInfo item in controllerType.GetMethods())
+        {
+            string m = item.Name;
+            string parameters = string.Join(", ", item.GetParameters()
+                .Select(p => $"{p.ParameterType.Name} {p.Name}"));
+            if (parameters.ToLower().Contains(" id)") && !parameters.Contains(','))
+            {
+                methods.Add(m);
+            }
+            Console.WriteLine($"- {m}({parameters})");
+        }
+        foreach (var url in methods)
+        {
+            Urls.RegisterPathForId('/'+url.ToLower(), controllerType, url, id);
+        }
+    }
 }
