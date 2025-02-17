@@ -1,25 +1,27 @@
 using System.Reflection;
 using SimpleWebServer.Models;
+using SimpleWebServer.urls;
 
 namespace SimpleWebServer.Requests;
 
 public class HandleGet
 {
-    private readonly string _body;
-
-    public HandleGet( string body)
+    public static string SimpleGet(string filename, string directory)
     {
-        _body = body;
+        Urls urls = new();
+        return urls.GetFilePath(filename, directory);
     }
 
-    public string AddModel(List<Books> booksList) // list books hardcoded
+    public static string UseForeachWithModel<T>(List<T> booksList, string filename, string directory)
     {
-        string[] splitted = _body.Split("\n");
+        Urls urls = new();
+        string body = urls.GetFilePath(filename, directory);
+        string[] splitted = body.Split("\n");
         bool marker = false;
         string result = "";
-        int bodyLenth = _body.Length;
-        string firstHalf = _body.Substring(0, _body.IndexOf("@foreach"));
-        string secondHalf = _body.Substring(_body.IndexOf("@endforeach"), bodyLenth - _body.IndexOf("@endforeach")).Replace("@endforeach", "");
+        int bodyLenth = body.Length;
+        string firstHalf = body.Substring(0, body.IndexOf("@foreach"));
+        string secondHalf = body.Substring(body.IndexOf("@endforeach"), bodyLenth - body.IndexOf("@endforeach")).Replace("@endforeach", "");
         
         foreach (var line in splitted)
         {
@@ -68,10 +70,12 @@ public class HandleGet
         return firstHalf;
     }
 
-    public string Details(Books book)
+    public static string Details(Books book, string filename, string directory)
     {
+        Urls urls = new();
+        string body = urls.GetFilePath(filename, directory);
         string result = "";
-        string[] items = _body.Split("\n");
+        string[] items = body.Split("\n");
         foreach (var line in items)
         {
             if (line.Contains("{{") && line.Contains("}}"))
@@ -88,7 +92,7 @@ public class HandleGet
         return result;
     }
 
-    string GetPropert(string property, Books book)
+    static string GetPropert<T>(string property, T book)
     {
         object value = null;
         PropertyInfo prop = book.GetType().GetProperty(property);
@@ -99,7 +103,7 @@ public class HandleGet
         return value.ToString();
     }
 
-    string GetInside(string line)
+    static string GetInside(string line)
     {
         int start = line.IndexOf("{{") + 2;
         int end = line.IndexOf("}}");

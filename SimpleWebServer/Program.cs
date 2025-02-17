@@ -82,6 +82,7 @@ class Program
                     }
                     else
                     {
+                        Console.WriteLine($"Method: {actionMethod} -----------------");
                         responseBody = (string)actionMethod.Invoke(controllerInstance, null);
                     }
                     responseHeader = urls.GenerateHeaders(url, responseBody.Length);
