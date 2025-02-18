@@ -50,8 +50,7 @@ class Program
             string responseHeader = "";
 
             var (controllerType, actionName) = urls.GetPath(url);
-            string[] splitted = new[] { "" };
-            splitted = actionName.Split('/');
+            string[] splitted = actionName.Split('/');
             
             if (controllerType != null)
             {
@@ -77,12 +76,23 @@ class Program
                     else if (method.ToLower() == "post")
                     {
                         object[] paramValues = new object[1];
-                        paramValues[0] = reader;
+                        int length = 0;
+                        string line;
+                        while (!string.IsNullOrEmpty(line = reader.ReadLine()))
+                        {
+                            if (line.StartsWith("Content-Length:"))
+                            {
+                                length = int.Parse(line.Split(" ")[1]);
+                            }
+                        }
+                        char[] buffer = new Char[length];
+                        reader.Read(buffer, 0, length);
+                        string responseString = new string(buffer);
+                        paramValues[0] = responseString;
                         responseBody = (string)actionMethod.Invoke(controllerInstance, paramValues);
                     }
                     else
                     {
-                        Console.WriteLine($"Method: {actionMethod} -----------------");
                         responseBody = (string)actionMethod.Invoke(controllerInstance, null);
                     }
                     responseHeader = urls.GenerateHeaders(url, responseBody.Length);

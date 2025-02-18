@@ -42,11 +42,11 @@ public class MainController
         return HandleGet.SimpleGet("/Add", _controllerName);
     }
     
-    public string AddBook(StreamReader reader)
+    public string AddBook(string responseString)
     {
         string responseBody = HandleGet.SimpleGet("/AddBook", _controllerName);
         
-        Dictionary<string, string> postData =  HandlePost.GetPostData(reader);
+        Dictionary<string, string> postData =  HandlePost.GetPostData(responseString);
         Books book = new Books
         {
             ID = postData.ContainsKey("Id") ? int.Parse(postData["Id"]) : 0,
@@ -87,10 +87,10 @@ public class MainController
         return responseBody;
     }
 
-    public string EditBook(StreamReader reader)
+    public string EditBook(string responseString)
     {
         string responseBody = HandleGet.SimpleGet("/EditBook", _controllerName);
-        Dictionary<string, string> postData = HandlePost.GetPostData(reader);
+        Dictionary<string, string> postData = HandlePost.GetPostData(responseString);
         Books b = bookList.FirstOrDefault(x => x.ID == int.Parse(postData["Id"]));
         b.Title = postData["Title"];
         b.Author = postData["Author"];

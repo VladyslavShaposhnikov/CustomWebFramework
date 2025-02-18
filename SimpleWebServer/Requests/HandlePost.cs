@@ -5,22 +5,9 @@ namespace SimpleWebServer.Requests;
 
 public class HandlePost
 {
-    public static Dictionary<string, string> GetPostData(StreamReader reader)
+    public static Dictionary<string, string> GetPostData(string responseString)
     {
-        int length = 0;
-        string line;
-        
-        while (!string.IsNullOrEmpty(line = reader.ReadLine()))
-        {
-            if (line.StartsWith("Content-Length:"))
-            {
-                length = int.Parse(line.Split(" ")[1]);
-            }
-        }
-        char[] buffer = new Char[length];
-        reader.Read(buffer, 0, length);
-        string postData = new string(buffer);
-        string decodedData = System.Web.HttpUtility.UrlDecode(postData);
+        string decodedData = System.Web.HttpUtility.UrlDecode(responseString);
         
         string[] split = decodedData.Split("&");
 
