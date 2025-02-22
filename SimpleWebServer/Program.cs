@@ -9,16 +9,9 @@ class Program
 {
     static void Main()
     {
-        int[] numbers = MainController.bookList.Select(id => id.ID).ToArray();
         Urls urls = new Urls();
-        urls.RegisterPath("/index", typeof(MainController), "Index");
-        urls.RegisterPath("/", typeof(MainController), "Index");
-        urls.RegisterPath("/add", typeof(MainController), "Add");
-        urls.RegisterPath("/addbook", typeof(MainController), "AddBook");
-        urls.RegisterPath("/editbook", typeof(MainController), "EditBook");
-        Urls.RegisterPathForId("/details", typeof(MainController), "Details", numbers);
-        Urls.RegisterPathForId("/delete", typeof(MainController), "Delete", numbers);
-        Urls.RegisterPathForId("/edit", typeof(MainController), "Edit", numbers);
+        
+        urls.InitializeUrls();
         
         int port = 8080;
         TcpListener server = new TcpListener(IPAddress.Any, port);

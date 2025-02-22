@@ -12,7 +12,7 @@ public class HandleGet
         return urls.GetFilePath(filename, directory);
     }
 
-    public static string UseForeachWithModel<T>(List<T> booksList, string filename, string directory)
+    public static string UseForeachWithModel<T>(List<T> itemList, string filename, string directory)
     {
         Urls urls = new();
         string body = urls.GetFilePath(filename, directory);
@@ -47,14 +47,14 @@ public class HandleGet
         
         string[] items = result.Split("\n");
         
-        foreach (var book in booksList)
+        foreach (var item in itemList)
         {
             foreach (var line in items)
             {
                 if (line.Contains("{{") && line.Contains("}}"))
                 {
                     string r = GetInside(line);
-                    firstHalf += line.Replace("{{" + r + "}}", GetPropert(r.Substring(r.IndexOf('.') + 1), book));
+                    firstHalf += line.Replace("{{" + r + "}}", GetPropert(r.Substring(r.IndexOf('.') + 1), item));
                     firstHalf += "\n";
                     continue;
                 }

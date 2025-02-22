@@ -1,3 +1,4 @@
+using SimpleWebServer.Controllers;
 using SimpleWebServer.Models;
 
 namespace SimpleWebServer.urls;
@@ -5,7 +6,18 @@ namespace SimpleWebServer.urls;
 public class Urls
 {
     private static Dictionary<string, (Type controllerType, string method)> _urls = new();
-    
+    public void InitializeUrls()
+    {
+        int[] numbers = MainController.bookList.Select(id => id.ID).ToArray();
+        RegisterPath("/index", typeof(MainController), "Index");
+        RegisterPath("/", typeof(MainController), "Index");
+        RegisterPath("/add", typeof(MainController), "Add");
+        RegisterPath("/addbook", typeof(MainController), "AddBook");
+        RegisterPath("/editbook", typeof(MainController), "EditBook");
+        RegisterPathForId("/details", typeof(MainController), "Details", numbers);
+        RegisterPathForId("/delete", typeof(MainController), "Delete", numbers);
+        RegisterPathForId("/edit", typeof(MainController), "Edit", numbers);
+    }
     public void RegisterPath(string url, Type controllerType, string method)
     {
         _urls[url] = (controllerType, method);
@@ -13,7 +25,7 @@ public class Urls
     }
     
     // to register path for existing in db model
-    public static void RegisterPathForId(string url, Type controllerType, string method, int[] numbers) 
+    public void RegisterPathForId(string url, Type controllerType, string method, int[] numbers) 
     {
         foreach (var number in numbers)
         {
