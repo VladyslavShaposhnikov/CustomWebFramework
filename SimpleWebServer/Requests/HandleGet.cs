@@ -25,7 +25,7 @@ public class HandleGet
         
         foreach (var line in splitted)
         {
-            if (line.Contains("@foreach"))
+            if (line.Contains("@foreach")) // function with taking argument "foreach", "if", ..., and 
             {
                 marker = true;
                 string cut = line.Replace("@foreach(", "");
@@ -64,8 +64,6 @@ public class HandleGet
             }
         }
         firstHalf += secondHalf;
-
-        //Console.WriteLine(firstHalf);
         
         return firstHalf;
     }

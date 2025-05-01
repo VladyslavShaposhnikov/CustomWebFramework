@@ -11,6 +11,7 @@ public class Urls
         int[] numbers = MainController.bookList.Select(id => id.ID).ToArray();
         RegisterPath("/index", typeof(MainController), "Index");
         RegisterPath("/", typeof(MainController), "Index");
+        RegisterPath("/favicon.ico", typeof(MainController), "Index"); // just to handle Url: /favicon.ico request. Need to change it
         RegisterPath("/add", typeof(MainController), "Add");
         RegisterPath("/addbook", typeof(MainController), "AddBook");
         RegisterPath("/editbook", typeof(MainController), "EditBook");
