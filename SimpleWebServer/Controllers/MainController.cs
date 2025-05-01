@@ -6,6 +6,8 @@ using SimpleWebServer.urls;
 
 namespace SimpleWebServer.Controllers;
 
+
+
 public class MainController
 {
     public static List<Books> bookList = new List<Books>
@@ -17,69 +19,63 @@ public class MainController
         new Books { ID = 5, Title = "Forest Gamp", Author = "I dont know" },
     };
     
-    Urls _urls = new();
-    
+    string _controllerName;
+
+    public MainController()
+    {
+        _controllerName = this.GetType().Name;
+    }
+
     public string Index()
     {
-        string methodName = MethodBase.GetCurrentMethod().Name;
-        string responseBody = _urls.getPath($"/{methodName.ToLower()}");
-        HandleGet hg = new HandleGet(responseBody);
-        return hg.AddModel(bookList);
+        return HandleGet.UseForeachWithModel(bookList, "/index", _controllerName);
     }
 
     public string Details(string id)
     {
-        string methodName = MethodBase.GetCurrentMethod().Name;
-        string responseBody = _urls.getPath($"/{methodName.ToLower()}");
-        HandleGet hg = new HandleGet(responseBody);
         Books book = bookList.FirstOrDefault(x => x.ID == int.Parse(id));
-        return hg.Details(book);
+        return HandleGet.Details(book, "/details", _controllerName);
     }
 
     public string Add()
     {
-        string methodName = MethodBase.GetCurrentMethod().Name;
-        string responseBody = _urls.getPath($"/{methodName.ToLower()}");
-        return responseBody;
+        return HandleGet.SimpleGet("/Add", _controllerName);
     }
     
-    public string AddBook(StreamReader reader)
+    public string AddBook(string responseString)
     {
-        Dictionary<string, string> param = new Dictionary<string, string>();
-        string methodName = MethodBase.GetCurrentMethod().Name;
-        string responseBody = _urls.getPath($"/{methodName.ToLower()}");
-        HandlePost hp = new HandlePost(reader);
-        string[] postData = hp.GetPostData().Split('&');
+        string responseBody = HandleGet.SimpleGet("/AddBook", _controllerName);
+        
+        Dictionary<string, string> postData =  HandlePost.GetPostData(responseString);
         Books book = new Books
         {
-            ID=int.Parse(postData[0].Substring(postData[0].IndexOf('=') + 1)),
-            Title=postData[1].Substring(postData[1].IndexOf('=') + 1).Replace('+',' '), 
-            Author=postData[2].Substring(postData[2].IndexOf('=') + 1).Replace('+',' ')
+            ID = postData.ContainsKey("Id") ? int.Parse(postData["Id"]) : 0,
+            Title = postData.ContainsKey("Title") ? postData["Title"] : null, 
+            Author = postData.ContainsKey("Author") ? postData["Author"] : null
         };
+        
         bookList.Add(book);
-        foreach (var item in postData)
-        {
-            string[] keyValue = item.Split('=');
-            param.Add(keyValue[0], keyValue[1].Replace('+', ' '));
-        }
-        Urls.RegisterPathForDetails("/details", typeof(MainController), "Details", new List<Books>(){book});
-        Urls.RegisterPathForDetails("/delete", typeof(MainController), "Delete", new List<Books>(){book});
-        Urls.RegisterPathForDetails("/edit", typeof(MainController), "Edit", new List<Books>(){book});
-        return hp.RenderTemplate(responseBody, param);
+        
+        HandlePost.CreatePathById(this.GetType(), postData.ContainsKey("Id") ? int.Parse(postData["Id"]) : 0); // you can use CreatePathById() to register path for actions which require 1 argument named "id" as parameter
+
+        // use method above to not do it manually like follow
+        // Urls.RegisterPathForId("/details", typeof(MainController), "Details", int.Parse(postData[0].Substring(postData[0].IndexOf('=') + 1)));
+        // Urls.RegisterPathForId("/delete", typeof(MainController), "Delete", int.Parse(postData[0].Substring(postData[0].IndexOf('=') + 1)));
+        // Urls.RegisterPathForId("/edit", typeof(MainController), "Edit", int.Parse(postData[0].Substring(postData[0].IndexOf('=') + 1)));
+        
+        return HandlePost.RenderTemplate(responseBody, postData);
     }
 
     public string Delete(string id)
     {
-        string methodName = MethodBase.GetCurrentMethod().Name;
-        string responseBody = _urls.getPath($"/{methodName.ToLower()}");
+        string responseBody = HandleGet.SimpleGet("/Delete", _controllerName);
         bookList.Remove(bookList.FirstOrDefault(x => x.ID == int.Parse(id)));
         return responseBody;
     }
     
     public string Edit( string id)
     {
-        string methodName = MethodBase.GetCurrentMethod().Name;
-        string responseBody = _urls.getPath($"/{methodName.ToLower()}");
+        string responseBody = HandleGet.SimpleGet("/Edit", _controllerName);
         Books book = bookList.FirstOrDefault(x => x.ID == int.Parse(id));
         Type type = typeof(Books);
         PropertyInfo[] properties = type.GetProperties();
@@ -91,16 +87,13 @@ public class MainController
         return responseBody;
     }
 
-    public string EditBook(StreamReader reader)
+    public string EditBook(string responseString)
     {
-        _urls.getUrl();
-        string methodName = MethodBase.GetCurrentMethod().Name;
-        string responseBody = _urls.getPath($"/{methodName.ToLower()}");
-        HandlePost hp = new HandlePost(reader);
-        string[] postData = hp.GetPostData().Split('&');
-        Books b = bookList.FirstOrDefault(x => x.ID == int.Parse(postData[0].Substring(postData[0].IndexOf('=') + 1)));
-        b.Title = postData[1].Substring(postData[1].IndexOf('=') + 1).Replace('+', ' ');
-        b.Author = postData[2].Substring(postData[2].IndexOf('=') + 1).Replace('+', ' ');
+        string responseBody = HandleGet.SimpleGet("/EditBook", _controllerName);
+        Dictionary<string, string> postData = HandlePost.GetPostData(responseString);
+        Books b = bookList.FirstOrDefault(x => x.ID == int.Parse(postData["Id"]));
+        b.Title = postData["Title"];
+        b.Author = postData["Author"];
         return responseBody;
     }
 }

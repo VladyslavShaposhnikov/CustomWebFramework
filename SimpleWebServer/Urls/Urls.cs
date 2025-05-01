@@ -1,3 +1,4 @@
+using SimpleWebServer.Controllers;
 using SimpleWebServer.Models;
 
 namespace SimpleWebServer.urls;
@@ -5,19 +6,39 @@ namespace SimpleWebServer.urls;
 public class Urls
 {
     private static Dictionary<string, (Type controllerType, string method)> _urls = new();
-    
+    public void InitializeUrls()
+    {
+        int[] numbers = MainController.bookList.Select(id => id.ID).ToArray();
+        RegisterPath("/index", typeof(MainController), "Index");
+        RegisterPath("/", typeof(MainController), "Index");
+        RegisterPath("/favicon.ico", typeof(MainController), "Index"); // just to handle Url: /favicon.ico request. Need to change it
+        RegisterPath("/add", typeof(MainController), "Add");
+        RegisterPath("/addbook", typeof(MainController), "AddBook");
+        RegisterPath("/editbook", typeof(MainController), "EditBook");
+        RegisterPathForId("/details", typeof(MainController), "Details", numbers);
+        RegisterPathForId("/delete", typeof(MainController), "Delete", numbers);
+        RegisterPathForId("/edit", typeof(MainController), "Edit", numbers);
+    }
     public void RegisterPath(string url, Type controllerType, string method)
     {
         _urls[url] = (controllerType, method);
+        Console.WriteLine($"Registered URL: {url}");
     }
     
-    public static void RegisterPathForDetails(string url, Type controllerType, string method, List<Books> books)
+    // to register path for existing in db model
+    public void RegisterPathForId(string url, Type controllerType, string method, int[] numbers) 
     {
-        foreach (var book in books)
+        foreach (var number in numbers)
         {
-            _urls[url+'/'+book.ID] = (controllerType, method+'/'+book.ID);
-            Console.WriteLine($"Success registered path: {url}/{book.ID}");
+            _urls[url+'/'+number] = (controllerType, method+'/'+number);
+            Console.WriteLine($"Success registered path: {url}/{number}");
         }
+    }
+    
+    public static void RegisterPathForId(string url, Type controllerType, string method, int id)
+    {
+        _urls[url+'/' + id] = (controllerType, method+'/'+id);
+        Console.WriteLine($"Success registered path: {url}/{id}");
     }
     
     public (Type controllerType, string method) GetPath(string url)
@@ -50,19 +71,12 @@ public class Urls
         return res;
     }
     
-    public string getPath(string url)
+    public string GetFilePath(string url, string controllerTemplate)
     {
         string basePath = AppDomain.CurrentDomain.BaseDirectory;
         string rootDir = Directory.GetParent(basePath).Parent.Parent.Parent.ToString();
+        rootDir = Path.Combine(rootDir, "templates");
         string temp = url.Substring(1) + ".html";
-        return File.ReadAllText(Path.Combine(rootDir, "templates", temp));
-    }
-
-    public void getUrl()
-    {
-        foreach (var key in _urls.Keys)
-        {
-            Console.Write(key + "---next---");
-        }
+        return File.ReadAllText(Path.Combine(rootDir, controllerTemplate.Replace("Controller", ""), temp));
     }
 }
