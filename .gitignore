@@ -1,0 +1,31 @@
+## Build files
+bin/
+obj/
+
+## Rider/JetBrains project files
+.idea/
+*.sln.iml
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Rider/Resharper specific
+*.DotSettings.user
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Logs
+*.log
+
+## .NET tools
+*.nupkg
+*.snupkg
+
+## Others
+*.vs/
+*.vscode/
